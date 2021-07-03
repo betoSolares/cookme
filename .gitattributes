@@ -1,0 +1,22 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Source code
+*.js              text
+*.json            text
+
+# Documentation
+*.md              text
+*.txt             text
+LICENSE           text
+
+# Configs
+*.conf            text
+*.config          text
+.gitattributes    text
+.gitconfig        text
+*.lock            text -diff
+package-lock.json text -diff
+
+# Ignore files
+*.*ignore         text
