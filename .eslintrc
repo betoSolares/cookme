@@ -4,7 +4,6 @@
     "node": true
   },
   "plugins": [
-    "eslint-plugin-html",
     "simple-import-sort",
     "import"
   ],
