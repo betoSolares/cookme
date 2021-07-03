@@ -1,15 +1,24 @@
 {
   "parser": "babel-eslint",
   "env": {
-    "node": true
+    "node": true,
+    "react-native/react-native": true
+  },
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    }
   },
   "plugins": [
     "simple-import-sort",
-    "import"
+    "import",
+    "react",
+    "react-native"
   ],
   "extends": [
     "eslint:recommended",
-    "plugin:prettier/recommended"
+    "plugin:prettier/recommended",
+    "plugin:react/recommended"
   ],
   "rules": {
     "no-console": ["error", { "allow": ["error"] }],
@@ -25,6 +34,11 @@
     "simple-import-sort/exports": "error",
     "import/first": "error",
     "import/newline-after-import": "error",
-    "import/no-duplicates": "error"
+    "import/no-duplicates": "error",
+    "react-native/no-unused-styles": 2,
+    "react-native/split-platform-components": 2,
+    "react-native/no-inline-styles": 2,
+    "react-native/no-raw-text": 2,
+    "react-native/no-single-element-style-arrays": 2,
   }
 }
