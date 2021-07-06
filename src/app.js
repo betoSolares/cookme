@@ -18,6 +18,7 @@ const App = () => {
   const [type, setType] = useState(Camera.Constants.Type.back);
   const [flash, setFlash] = useState(Camera.Constants.FlashMode.off);
   const [preview, setPreview] = useState(false);
+  const [cameraReady, setCameraReady] = useState(false);
 
   useEffect(() => {
     askPermission();
@@ -42,6 +43,10 @@ const App = () => {
         ? Camera.Constants.FlashMode.torch
         : Camera.Constants.FlashMode.off
     );
+  };
+
+  const onCameraReady = () => {
+    setCameraReady(true);
   };
 
   const snap = async () => {
@@ -104,6 +109,7 @@ const App = () => {
         type={type}
         flashMode={flash}
         autoFocus={"on"}
+        onCameraReady={onCameraReady}
       >
         <View style={styles.uiContainer}>
           {!preview && (
@@ -114,6 +120,7 @@ const App = () => {
                   icon={"account-circle"}
                   iconSize={34}
                   color={"#FEFEFE"}
+                  disabled={!cameraReady}
                   onPress={() => {}}
                 />
                 <ToggleButton
@@ -122,6 +129,7 @@ const App = () => {
                   iconSize={34}
                   color={"#FEFEFE"}
                   styles={styles.iconButton}
+                  disabled={!cameraReady}
                   onPress={handleType}
                 />
                 <ToggleButton
@@ -130,6 +138,7 @@ const App = () => {
                   iconSize={34}
                   color={"#FEFEFE"}
                   styles={styles.iconButton}
+                  disabled={!cameraReady}
                   onPress={handleFlash}
                 />
                 <IconifyButton
@@ -137,6 +146,7 @@ const App = () => {
                   icon={"nut"}
                   iconSize={34}
                   color={"#FEFEFE"}
+                  disabled={!cameraReady}
                   onPress={() => {}}
                 />
               </View>
@@ -146,6 +156,7 @@ const App = () => {
                   icon={"upload"}
                   iconSize={34}
                   color={"#FEFEFE"}
+                  disabled={!cameraReady}
                   onPress={() => {}}
                 />
                 <IconifyButton
@@ -153,6 +164,7 @@ const App = () => {
                   icon={"circle-double"}
                   iconSize={68}
                   color={"#FEFEFE"}
+                  disabled={!cameraReady}
                   onPress={snap}
                 />
                 <IconifyButton
@@ -160,6 +172,7 @@ const App = () => {
                   icon={"circle-edit-outline"}
                   iconSize={34}
                   color={"#FEFEFE"}
+                  disabled={!cameraReady}
                   onPress={() => {}}
                 />
               </View>
