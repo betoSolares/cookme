@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React, { useState } from "react";
-import { Animated, TouchableWithoutFeedback } from "react-native";
+import { Animated, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 const ToggleButton = ({
@@ -49,13 +49,13 @@ const ToggleButton = ({
   };
 
   return (
-    <TouchableWithoutFeedback
+    <TouchableOpacity
       disabled={(toggled && singleToggled) || disabled}
       style={style}
       onPress={toggle}
     >
       <AnimatedIcon style={[p, s]} color={color} size={iconSize} name={name} />
-    </TouchableWithoutFeedback>
+    </TouchableOpacity>
   );
 };
 
