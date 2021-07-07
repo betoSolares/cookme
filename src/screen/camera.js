@@ -1,9 +1,10 @@
 import { useIsFocused } from "@react-navigation/core";
 import { Camera } from "expo-camera";
+import * as ImagePicker from "expo-image-picker";
 import { StatusBar } from "expo-status-bar";
 import PropTypes from "prop-types";
 import React, { useEffect, useRef, useState } from "react";
-import { SafeAreaView, StyleSheet, View } from "react-native";
+import { Image, SafeAreaView, StyleSheet, View } from "react-native";
 
 import {
   CustomButton,
@@ -15,20 +16,28 @@ import {
 
 const CameraScreen = ({ navigation }) => {
   const cameraReference = useRef();
-  const [hasPermission, setHasPermission] = useState(null);
+  const [hasCameraPermission, setHasCameraPermission] = useState(null);
+  const [hasMediaPermission, setHasMediaPermission] = useState(false);
   const [type, setType] = useState(Camera.Constants.Type.back);
   const [flash, setFlash] = useState(Camera.Constants.FlashMode.off);
   const [preview, setPreview] = useState(false);
   const [cameraReady, setCameraReady] = useState(false);
+  const [image, setImage] = useState(null);
   const isFocused = useIsFocused();
 
   useEffect(() => {
-    askPermission();
+    askCameraPermission();
   }, []);
 
-  const askPermission = async () => {
+  const askCameraPermission = async () => {
     const { status } = await Camera.requestPermissionsAsync();
-    setHasPermission(status === "granted");
+    setHasCameraPermission(status === "granted");
+  };
+
+  const askMediaPermission = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    setHasMediaPermission(status === "granted");
+    return status === "granted";
   };
 
   const handleType = () => {
@@ -54,26 +63,49 @@ const CameraScreen = ({ navigation }) => {
   const snap = async () => {
     if (cameraReference.current) {
       const options = { quality: 1, base64: true };
-      const data = await cameraReference.current.takePictureAsync(options);
-      const source = data.base64;
+      const { uri } = await cameraReference.current.takePictureAsync(options);
 
-      if (source) {
+      if (uri) {
         await cameraReference.current.pausePreview();
+        setFlash(Camera.Constants.FlashMode.off);
         setPreview(true);
+        setImage(uri);
+      }
+    }
+  };
+
+  const pickImage = async () => {
+    if (hasMediaPermission || (await askMediaPermission())) {
+      const options = {
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: false,
+        quality: 1,
+        base64: true,
+      };
+      const { cancelled, uri } = await ImagePicker.launchImageLibraryAsync(
+        options
+      );
+
+      if (!cancelled) {
+        await cameraReference.current.pausePreview();
+        setFlash(Camera.Constants.FlashMode.off);
+        setPreview(true);
+        setImage(uri);
       }
     }
   };
 
   const cancelPreview = async () => {
     await cameraReference.current.resumePreview();
+    setImage(false);
     setPreview(false);
   };
 
-  if (hasPermission === null) {
+  if (hasCameraPermission === null) {
     return <View />;
   }
 
-  if (hasPermission === false) {
+  if (hasCameraPermission === false) {
     return (
       <SafeAreaView style={styles.permissionContainer}>
         <CustomText
@@ -95,7 +127,7 @@ const CameraScreen = ({ navigation }) => {
           color={"#3366BB"}
           textAlign={"center"}
           content={"Give access"}
-          onPress={askPermission}
+          onPress={askCameraPermission}
           h4
         />
         <StatusBar style="auto" />
@@ -160,7 +192,7 @@ const CameraScreen = ({ navigation }) => {
                     iconSize={34}
                     color={"#FEFEFE"}
                     disabled={!cameraReady}
-                    onPress={() => {}}
+                    onPress={pickImage}
                   />
                   <IconifyButton
                     style={styles.iconButton}
@@ -192,6 +224,9 @@ const CameraScreen = ({ navigation }) => {
                     onPress={cancelPreview}
                   />
                 </View>
+                {image && (
+                  <Image source={{ uri: image }} style={styles.image} />
+                )}
                 <View style={styles.bottomControls}>
                   <CustomButton
                     backgroundColor={"#F7F401"}
@@ -217,6 +252,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "flex-end",
+    zIndex: 2,
   },
 
   camera: {
@@ -235,6 +271,18 @@ const styles = StyleSheet.create({
     width: 50,
   },
 
+  image: {
+    flex: 1,
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 1,
+    width: "100%",
+    height: "100%",
+  },
+
   permissionContainer: {
     alignItems: "center",
     backgroundColor: "#000102",
@@ -250,6 +298,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
+    zIndex: 2,
   },
 
   uiContainer: {
@@ -265,7 +314,5 @@ const styles = StyleSheet.create({
 CameraScreen.propTypes = {
   navigation: PropTypes.object.isRequired,
 };
-
-CameraScreen.displayName = "CameraScreen";
 
 export default CameraScreen;
