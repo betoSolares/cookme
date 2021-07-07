@@ -4,11 +4,7 @@ import { TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 const IconifyButton = ({ style, disabled, icon, iconSize, color, onPress }) => (
-  <TouchableOpacity
-    disabled={disabled}
-    style={style}
-    onPress={onPress}
-  >
+  <TouchableOpacity disabled={disabled} style={style} onPress={onPress}>
     <Icon name={icon} size={iconSize} color={color} />
   </TouchableOpacity>
 );
