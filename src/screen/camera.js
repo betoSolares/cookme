@@ -195,9 +195,8 @@ const CameraScreen = ({ navigation }) => {
                     onPress={pickImage}
                   />
                   <IconifyButton
-                    style={styles.iconButton}
                     icon={"circle-double"}
-                    iconSize={68}
+                    iconSize={80}
                     color={"#FEFEFE"}
                     disabled={!cameraReady}
                     onPress={snap}
@@ -208,7 +207,7 @@ const CameraScreen = ({ navigation }) => {
                     iconSize={34}
                     color={"#FEFEFE"}
                     disabled={!cameraReady}
-                    onPress={() => {}}
+                    onPress={() => navigation.navigate("Ingredients")}
                   />
                 </View>
               </>

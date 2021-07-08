@@ -3,7 +3,12 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { registerRootComponent } from "expo";
 import React from "react";
 
-import { AccountScreen, CameraScreen, SettingsScreen } from "./screen";
+import {
+  AccountScreen,
+  CameraScreen,
+  IngredientsScreen,
+  SettingsScreen,
+} from "./screen";
 
 const Stack = createStackNavigator();
 
@@ -17,6 +22,7 @@ const App = () => (
       />
       <Stack.Screen name={"Account"} component={AccountScreen} />
       <Stack.Screen name={"Settings"} component={SettingsScreen} />
+      <Stack.Screen name={"Ingredients"} component={IngredientsScreen} />
     </Stack.Navigator>
   </NavigationContainer>
 );
