@@ -38,3 +38,5 @@ npm run android # Command for android
 
 npm run ios # Command for ios (macOS only)
 ```
+
+Make sure you have correct `.env` file.
