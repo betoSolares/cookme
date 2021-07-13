@@ -48,7 +48,7 @@ const detectIngredients = async (file) => {
   if (await fileExists(file)) {
     const { status, data } = await makeRequest(file);
 
-    if (status === 400) {
+    if (status !== 400) {
       return { error: "Error", message: data.message, ingredients: [] };
     }
 
