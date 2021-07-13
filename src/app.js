@@ -9,6 +9,7 @@ import {
   IngredientsScreen,
   SettingsScreen,
 } from "./screen";
+import { LogMealAPI } from "./services";
 
 const Stack = createStackNavigator();
 
@@ -18,6 +19,7 @@ const App = () => (
       <Stack.Screen
         name={"Camera"}
         component={CameraScreen}
+        initialParams={{ ingredientDetector: LogMealAPI }}
         options={{ headerShown: false }}
       />
       <Stack.Screen name={"Account"} component={AccountScreen} />
