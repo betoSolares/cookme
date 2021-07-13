@@ -4,7 +4,8 @@ import * as ImagePicker from "expo-image-picker";
 import { StatusBar } from "expo-status-bar";
 import PropTypes from "prop-types";
 import React, { useEffect, useRef, useState } from "react";
-import { Image, SafeAreaView, StyleSheet, View } from "react-native";
+import { Alert, Image, SafeAreaView, StyleSheet, View } from "react-native";
+import Spinner from "react-native-loading-spinner-overlay";
 
 import {
   CustomButton,
@@ -13,17 +14,23 @@ import {
   LinkText,
   ToggleButton,
 } from "../components";
+import { checkContract } from "../utils";
 
-const CameraScreen = ({ navigation }) => {
+const CameraScreen = ({ navigation, route }) => {
   const cameraReference = useRef();
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
   const [hasMediaPermission, setHasMediaPermission] = useState(false);
   const [type, setType] = useState(Camera.Constants.Type.back);
   const [flash, setFlash] = useState(Camera.Constants.FlashMode.off);
   const [preview, setPreview] = useState(false);
+  const [spinner, setSpinner] = useState(false);
   const [cameraReady, setCameraReady] = useState(false);
   const [image, setImage] = useState(null);
   const isFocused = useIsFocused();
+  const { ingredientDetector } = route.params;
+  const validIngredientDetector = checkContract(ingredientDetector, [
+    "detectIngredients",
+  ]);
 
   useEffect(() => {
     askCameraPermission();
@@ -62,7 +69,7 @@ const CameraScreen = ({ navigation }) => {
 
   const snap = async () => {
     if (cameraReference.current) {
-      const options = { quality: 1, base64: true };
+      const options = { quality: 0.5, base64: true };
       const { uri } = await cameraReference.current.takePictureAsync(options);
 
       if (uri) {
@@ -79,7 +86,7 @@ const CameraScreen = ({ navigation }) => {
       const options = {
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: false,
-        quality: 1,
+        quality: 0.5,
         base64: true,
       };
       const { cancelled, uri } = await ImagePicker.launchImageLibraryAsync(
@@ -97,8 +104,42 @@ const CameraScreen = ({ navigation }) => {
 
   const cancelPreview = async () => {
     await cameraReference.current.resumePreview();
-    setImage(false);
+    setImage(null);
     setPreview(false);
+  };
+
+  const getIngredients = async () => {
+    const ingredients = await ingredientDetector.detectIngredients(image);
+    return ingredients;
+  };
+
+  const searchFromImage = async () => {
+    const alertButtons = [{ text: "Ok", onPress: cancelPreview }];
+    const alertOptions = { cancelable: true };
+
+    if (validIngredientDetector) {
+      setSpinner(true);
+      const ingredients = await getIngredients();
+      if (ingredients.ingredients.length >= 0) {
+        setSpinner(false);
+        await cancelPreview();
+      } else {
+        setSpinner(false);
+        Alert.alert(
+          ingredients.error,
+          ingredients.message,
+          alertButtons,
+          alertOptions
+        );
+      }
+    } else {
+      Alert.alert(
+        "Error",
+        "Ingredients detector is invalid.",
+        alertButtons,
+        alertOptions
+      );
+    }
   };
 
   if (hasCameraPermission === null) {
@@ -214,27 +255,37 @@ const CameraScreen = ({ navigation }) => {
             )}
             {preview && (
               <>
-                <View style={styles.topControls}>
-                  <IconifyButton
-                    style={styles.iconButton}
-                    icon={"close-thick"}
-                    iconSize={34}
-                    color={"#FEFEFE"}
-                    onPress={cancelPreview}
-                  />
-                </View>
+                <Spinner
+                  visible={spinner}
+                  textContent={"Processing image"}
+                  color={"#F7F401"}
+                  textStyle={styles.spinnerText}
+                />
+                {!spinner && (
+                  <View style={styles.topControls}>
+                    <IconifyButton
+                      style={styles.iconButton}
+                      icon={"close-thick"}
+                      iconSize={34}
+                      color={"#FEFEFE"}
+                      onPress={cancelPreview}
+                    />
+                  </View>
+                )}
                 {image && (
                   <Image source={{ uri: image }} style={styles.image} />
                 )}
-                <View style={styles.bottomControls}>
-                  <CustomButton
-                    backgroundColor={"#F7F401"}
-                    color={"#000102"}
-                    size={"big"}
-                    tittle={"Find Recepie"}
-                    onPress={() => {}}
-                  />
-                </View>
+                {!spinner && (
+                  <View style={styles.bottomControls}>
+                    <CustomButton
+                      backgroundColor={"#F7F401"}
+                      color={"#000102"}
+                      size={"big"}
+                      tittle={"Find Recepie"}
+                      onPress={searchFromImage}
+                    />
+                  </View>
+                )}
               </>
             )}
           </View>
@@ -308,10 +359,15 @@ const styles = StyleSheet.create({
     width: "100%",
     zIndex: 0,
   },
+
+  spinnerText: {
+    color: "#F7F401",
+  },
 });
 
 CameraScreen.propTypes = {
   navigation: PropTypes.object.isRequired,
+  route: PropTypes.object.isRequired,
 };
 
 export default CameraScreen;
