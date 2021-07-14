@@ -198,10 +198,6 @@ const styles = StyleSheet.create({
   scroll: {
     flexGrow: 1,
   },
-
-  spinnerText: {
-    color: "#F7F401",
-  },
 });
 
 IngredientsScreen.propTypes = {
