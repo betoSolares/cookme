@@ -20,8 +20,8 @@ const getRecipe = async (ingredients) => {
     return { error: "Error", message: "Something occurred searching the recepie", recepies: [] };
   }
 
-  if (data.hits >= 1) {
-    return { error: "", message: "", recepies: data };
+  if (data.hits.length >= 1) {
+    return { error: "", message: "", recepies: data.hits };
   }
 
   return { error: "Error", message: "No recepie found", recepies: [] };
