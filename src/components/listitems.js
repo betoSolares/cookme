@@ -45,7 +45,7 @@ NormalListItem.propTypes = {
   text: PropTypes.string.isRequired,
   color: PropTypes.string.isRequired,
   backgroundColor: PropTypes.string.isRequired,
-  onPress: PropTypes.func.isRequired
+  onPress: PropTypes.func.isRequired,
 };
 
 RemovableListItem.propTypes = {
