@@ -27,10 +27,11 @@ const CameraScreen = ({ navigation, route }) => {
   const [cameraReady, setCameraReady] = useState(false);
   const [image, setImage] = useState(null);
   const isFocused = useIsFocused();
-  const { ingredientDetector } = route.params;
+  const { ingredientDetector, recipeSearch } = route.params;
   const validIngredientDetector = checkContract(ingredientDetector, [
     "detectIngredients",
   ]);
+  const validRecipeSearch = checkContract(recipeSearch, ["getRecipe"]);
 
   useEffect(() => {
     askCameraPermission();
@@ -117,14 +118,28 @@ const CameraScreen = ({ navigation, route }) => {
     const alertButtons = [{ text: "Ok", onPress: cancelPreview }];
     const alertOptions = { cancelable: true };
 
-    if (validIngredientDetector) {
+    if (validIngredientDetector && validRecipeSearch) {
       setSpinner(true);
       const ingredients = await getIngredients();
-      if (ingredients.ingredients.length >= 0) {
-        setSpinner(false);
-        await cancelPreview();
+      if (ingredients.ingredients.length > 0) {
+        const recepies = await recipeSearch.getRecipe(ingredients.ingredients);
+        if (recepies.recepies.length > 0) {
+          setSpinner(false);
+          await cancelPreview();
+          navigation.navigate("Recepies", { recepies: recepies.recepies });
+        } else {
+          setSpinner(false);
+          await cancelPreview();
+          Alert.alert(
+            recepies.error,
+            recepies.message,
+            alertButtons,
+            alertOptions
+          );
+        }
       } else {
         setSpinner(false);
+        await cancelPreview();
         Alert.alert(
           ingredients.error,
           ingredients.message,
@@ -133,6 +148,7 @@ const CameraScreen = ({ navigation, route }) => {
         );
       }
     } else {
+      await cancelPreview();
       Alert.alert(
         "Error",
         "Ingredients detector is invalid.",
