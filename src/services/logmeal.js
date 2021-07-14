@@ -53,7 +53,7 @@ const detectIngredients = async (file) => {
     }
 
     const results = parseResponse(data);
-    if (results.length >= 0) {
+    if (results.length >= 1) {
       return { error: "", message: "", ingredients: results };
     }
     return { error: "Error", message: "No ingredients found", ingredients: [] };
