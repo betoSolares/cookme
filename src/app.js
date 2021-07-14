@@ -9,6 +9,7 @@ import {
   IngredientsScreen,
   RecepiesScreen,
   SettingsScreen,
+  SpecificScreen,
 } from "./screen";
 import { EdamamAPI, LogMealAPI } from "./services";
 
@@ -28,11 +29,20 @@ const App = () => (
       />
       <Stack.Screen name={"Account"} component={AccountScreen} />
       <Stack.Screen name={"Settings"} component={SettingsScreen} />
-      <Stack.Screen name={"Ingredients"} component={IngredientsScreen} />
+      <Stack.Screen
+        name={"Ingredients"}
+        component={IngredientsScreen}
+        initialParams={{ recipeSearch: EdamamAPI }}
+      />
       <Stack.Screen
         name={"Recepies"}
         component={RecepiesScreen}
         initialParams={{ recepies: [] }}
+      />
+      <Stack.Screen
+        name={"Specific"}
+        component={SpecificScreen}
+        options={({ route }) => ({ title: route.params.title })}
       />
     </Stack.Navigator>
   </NavigationContainer>

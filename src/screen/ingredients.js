@@ -1,6 +1,8 @@
 import { StatusBar } from "expo-status-bar";
+import PropTypes from "prop-types";
 import React, { useState } from "react";
 import {
+  Alert,
   Keyboard,
   KeyboardAvoidingView,
   Platform,
@@ -10,13 +12,18 @@ import {
   TextInput,
   View,
 } from "react-native";
+import Spinner from "react-native-loading-spinner-overlay";
 
 import { CustomButton, IconifyButton, RemovableListItem } from "../components";
+import { checkContract } from "../utils";
 
-const IngredientsScreen = () => {
+const IngredientsScreen = ({ navigation, route }) => {
   const [count, setCount] = useState(0);
   const [ingredient, setIngredient] = useState("");
   const [ingredientList, setIngredientList] = useState([]);
+  const [spinner, setSpinner] = useState(false);
+  const { recipeSearch } = route.params;
+  const validRecipeSearch = checkContract(recipeSearch, ["getRecipe"]);
 
   const handleText = (text) => {
     setIngredient(text);
@@ -40,8 +47,53 @@ const IngredientsScreen = () => {
     setIngredientList(newIngredients);
   };
 
+  const searchRecipe = async () => {
+    const alertButtons = [{ text: "Ok" }];
+    const alertOptions = { cancelable: true };
+
+    if (validRecipeSearch) {
+      setSpinner(true);
+      if (ingredientList.length > 0) {
+        const recepies = await recipeSearch.getRecipe(ingredientList);
+        if (recepies.recepies.length > 0) {
+          setSpinner(false);
+          navigation.navigate("Recepies", { recepies: recepies.recepies });
+        } else {
+          setSpinner(false);
+          Alert.alert(
+            recepies.error,
+            recepies.message,
+            alertButtons,
+            alertOptions
+          );
+        }
+      } else {
+        setSpinner(false);
+        Alert.alert(
+          "Error",
+          "Insert at least one ingredient",
+          alertButtons,
+          alertOptions
+        );
+      }
+    } else {
+      Alert.alert(
+        "Error",
+        "Ingredients detector is invalid.",
+        alertButtons,
+        alertOptions
+      );
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
+      <Spinner
+        visible={spinner}
+        textContent={"Processing image"}
+        color={"#F7F401"}
+        textStyle={styles.spinnerText}
+      />
       <View style={styles.scrollContainer}>
         <ScrollView
           contentContainerStyle={styles.scroll}
@@ -81,7 +133,7 @@ const IngredientsScreen = () => {
           />
         </KeyboardAvoidingView>
         <CustomButton
-          onPress={() => {}}
+          onPress={searchRecipe}
           size="big"
           backgroundColor={"#F7F401"}
           color={"#000102"}
@@ -146,6 +198,15 @@ const styles = StyleSheet.create({
   scroll: {
     flexGrow: 1,
   },
+
+  spinnerText: {
+    color: "#F7F401",
+  },
 });
+
+IngredientsScreen.propTypes = {
+  navigation: PropTypes.object.isRequired,
+  route: PropTypes.object.isRequired,
+};
 
 export default IngredientsScreen;
