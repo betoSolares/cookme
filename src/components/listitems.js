@@ -1,14 +1,16 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 import { IconifyButton } from ".";
 import { CustomText } from "./text";
 
-export const NormalListItem = ({ text, backgroundColor, color }) => (
-  <View style={[styles.item, { backgroundColor }]}>
-    <CustomText p content={text} color={color} textAlign={"auto"} />
-  </View>
+export const NormalListItem = ({ text, backgroundColor, color, onPress }) => (
+  <TouchableOpacity onPress={onPress}>
+    <View style={[styles.item, { backgroundColor }]} onPress>
+      <CustomText p content={text} color={color} textAlign={"auto"} />
+    </View>
+  </TouchableOpacity>
 );
 
 export const RemovableListItem = ({
@@ -43,6 +45,7 @@ NormalListItem.propTypes = {
   text: PropTypes.string.isRequired,
   color: PropTypes.string.isRequired,
   backgroundColor: PropTypes.string.isRequired,
+  onPress: PropTypes.func.isRequired
 };
 
 RemovableListItem.propTypes = {
