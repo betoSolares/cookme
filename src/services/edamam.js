@@ -17,7 +17,11 @@ const getRecipe = async (ingredients) => {
   const { status, data } = await makeRequest(ingredients);
 
   if (status !== 200) {
-    return { error: "Error", message: "Something occurred searching the recepie", recepies: [] };
+    return {
+      error: "Error",
+      message: "Something occurred searching the recepie",
+      recepies: [],
+    };
   }
 
   if (data.hits.length >= 1) {
@@ -28,5 +32,5 @@ const getRecipe = async (ingredients) => {
 };
 
 export default {
-  getRecipe
+  getRecipe,
 };
