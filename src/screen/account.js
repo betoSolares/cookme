@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import React, { useLayoutEffect } from "react";
 import { SafeAreaView, StyleSheet, View } from "react-native";
+import { DBURL } from "@env";
 
 import { CustomButton, CustomText, IconifyButton } from "../components";
 
@@ -41,7 +42,7 @@ const AccountScreen = ({ navigation }) => {
       />
       <View style={styles.buttons}>
         <CustomButton
-          onPress={() => {}}
+          onPress={() => navigation.navigate("LogIn")}
           size="big"
           backgroundColor={"#F7F401"}
           color={"#000102"}
