@@ -7,6 +7,7 @@ import {
   AccountScreen,
   CameraScreen,
   IngredientsScreen,
+  LogInScreen,
   RecepiesScreen,
   SettingsScreen,
   SpecificScreen,
@@ -44,6 +45,7 @@ const App = () => (
         component={SpecificScreen}
         options={({ route }) => ({ title: route.params.title })}
       />
+      <Stack.Screen name={"LogIn"} component={LogInScreen} />
     </Stack.Navigator>
   </NavigationContainer>
 );
