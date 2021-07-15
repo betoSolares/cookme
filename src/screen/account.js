@@ -1,7 +1,6 @@
 import PropTypes from "prop-types";
 import React, { useLayoutEffect } from "react";
 import { SafeAreaView, StyleSheet, View } from "react-native";
-import { DBURL } from "@env";
 
 import { CustomButton, CustomText, IconifyButton } from "../components";
 
@@ -71,8 +70,8 @@ const styles = StyleSheet.create({
   buttons: {
     margin: 50,
     alignItems: "center",
-    justifyContent: "center"
-  }
+    justifyContent: "center",
+  },
 });
 
 AccountScreen.propTypes = {

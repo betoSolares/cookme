@@ -1,7 +1,15 @@
-import PropTypes from "prop-types";
-import React, {useState} from "react";
-import { Alert, KeyboardAvoidingView, SafeAreaView, StyleSheet, TextInput, View } from "react-native";
 import { DBURL } from "@env";
+import PropTypes from "prop-types";
+import React, { useState } from "react";
+import {
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  SafeAreaView,
+  StyleSheet,
+  TextInput,
+  View,
+} from "react-native";
 
 import { CustomButton, CustomText } from "../components";
 
@@ -14,27 +22,24 @@ const LogInScreen = () => {
 
   const makeRequest = async () => {
     const response = await fetch(`${DBURL}query`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify({ q: `INSERT INTO Cooker (username, email, firstname, lastname, userpassword) VALUES ('${username}', '${email}', '${firstname}', '${lastname}', '${password}');` })
+      body: JSON.stringify({
+        q: `INSERT INTO Cooker (username, email, firstname, lastname, userpassword) VALUES ('${username}', '${email}', '${firstname}', '${lastname}', '${password}');`,
+      }),
     });
 
     return await response.json();
-  }
+  };
 
   const logIn = async () => {
     const res = await makeRequest();
     if (res.error === false) {
       const alertButtons = [{ text: "Ok" }];
       const alertOptions = { cancelable: true };
-      Alert.alert(
-        "Log in",
-        "User created",
-        alertButtons,
-        alertOptions
-      );
+      Alert.alert("Log in", "User created", alertButtons, alertOptions);
     }
   };
 
@@ -174,7 +179,7 @@ const styles = StyleSheet.create({
   buttons: {
     margin: 20,
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
   },
 
   write: {
